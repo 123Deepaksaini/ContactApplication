@@ -9,19 +9,12 @@ services:
       - key: MYSQLHOST
         sync: false
       - key: MYSQLPORT
-        value: "3306"
+        value: "4000"
       - key: MYSQLDATABASE
-        value: contact_ap
+        value: "contact_ap"
       - key: MYSQLUSER
         sync: false
       - key: MYSQLPASSWORD
         sync: false
       - key: PORT
         value: "8080"
-
-databases:
-  - name: contact-db
-    databaseName: contact_ap
-    region: singapore
-    plan: free
-    mysqlMajorVersion: "8"
