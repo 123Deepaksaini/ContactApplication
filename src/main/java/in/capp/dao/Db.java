@@ -2,10 +2,13 @@ package in.capp.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 public class Db {
+    private static volatile boolean schemaInitialized = false;
 
 	 public static Connection getConnection() {
         try {
@@ -59,6 +62,27 @@ public class Db {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void initializeSchemaIfRequired() {
+        if (schemaInitialized) {
+            return;
+        }
+        synchronized (Db.class) {
+            if (schemaInitialized) {
+                return;
+            }
+            try (Connection con = getConnection()) {
+                if (con == null) {
+                    throw new IllegalStateException("Unable to open DB connection for schema initialization");
+                }
+                ScriptUtils.executeSqlScript(con, new ClassPathResource("schema.sql"));
+                schemaInitialized = true;
+                System.out.println("Database schema initialized successfully.");
+            } catch (Exception e) {
+                throw new IllegalStateException("Schema initialization failed", e);
+            }
+        }
     }
 
     private static String getEnv(String... keys) {
