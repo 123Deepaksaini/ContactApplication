@@ -1,5 +1,5 @@
 # Build stage
-FROM maven:3.8.1-openjdk-8-slim as builder
+FROM maven:3.8.1-eclipse-temurin-8 as builder
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Runtime stage
-FROM openjdk:8-jre-slim
+FROM eclipse-temurin:8-jre-slim
 
 WORKDIR /app
 
