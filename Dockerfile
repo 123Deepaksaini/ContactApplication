@@ -1,5 +1,5 @@
 # Build stage
-FROM maven:3.8.1-eclipse-temurin-8 as builder
+FROM maven:3.8.4-eclipse-temurin-8 AS builder
 
 WORKDIR /app
 
@@ -16,9 +16,12 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Runtime stage
-FROM eclipse-temurin:8-jre-slim
+FROM eclipse-temurin:8-jre-alpine
 
 WORKDIR /app
+
+# Install curl for health check
+RUN apk add --no-cache curl
 
 # Copy built jar from builder stage
 COPY --from=builder /app/target/*.jar app.jar
