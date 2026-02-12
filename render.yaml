@@ -6,15 +6,15 @@ services:
     plan: free
     healthCheckPath: /
     envVars:
-      - key: HOST
+      - key: MYSQLHOST
         sync: false
-      - key: PORT
-        value: "4000"
-      - key: DATABASE
+      - key: MYSQLPORT
+        value: "3306"
+      - key: MYSQLDATABASE
         value: contact_ap
-      - key: USERNAME
+      - key: MYSQLUSER
         sync: false
-      - key: PASSWORD
+      - key: MYSQLPASSWORD
         sync: false
       - key: PORT
         value: "8080"
