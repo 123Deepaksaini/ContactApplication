@@ -6,22 +6,22 @@ services:
     plan: free
     healthCheckPath: /
     envVars:
-      - key: MYSQLHOST
+      - key: HOST
         sync: false
-      - key: MYSQLPORT
-        value: "3306"
-      - key: MYSQLDATABASE
-        value: contactdb
-      - key: MYSQLUSER
+      - key: PORT
+        value: "4000"
+      - key: DATABASE
+        value: contact_ab
+      - key: USERNAME
         sync: false
-      - key: MYSQLPASSWORD
+      - key: PASSWORD
         sync: false
       - key: PORT
         value: "8080"
 
 databases:
   - name: contact-db
-    databaseName: contactdb
+    databaseName: contact_ab
     region: singapore
     plan: free
     mysqlMajorVersion: "8"
