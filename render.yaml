@@ -17,4 +17,4 @@ services:
       - key: MYSQLPASSWORD
         sync: false
       - key: MYSQL_JDBC_PARAMS
-        value: "useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=true&requireSSL=true&enabledTLSProtocols=TLSv1.2"
+        value: "useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=true&sslMode=REQUIRED&enabledTLSProtocols=TLSv1.2"

@@ -23,34 +23,33 @@ public class Db {
                 // JNDI not available, fall back to direct JDBC
             }
             
-            // Fall back to direct JDBC using Render/Railway env vars first,
-            // then legacy variable names for backward compatibility.
-            String host = getEnv("MYSQLHOST", "HOST");
-            String port = getEnv("MYSQLPORT", "DB_PORT");
-            String database = getEnv("MYSQLDATABASE", "DATABASE");
-            String user = getEnv("MYSQLUSER", "USERNAME");
-            String password = getEnv("MYSQLPASSWORD", "PASSWORD");
+            // Direct JDBC via explicit MySQL env vars.
+            String host = getEnv("MYSQLHOST");
+            String port = getEnv("MYSQLPORT");
+            String database = getEnv("MYSQLDATABASE");
+            String user = getEnv("MYSQLUSER");
+            String password = getEnv("MYSQLPASSWORD");
             String jdbcParams = getEnv("MYSQL_JDBC_PARAMS");
 
             if (host == null || host.trim().isEmpty()) {
-                throw new IllegalStateException("Database host is not configured");
+                throw new IllegalStateException("MYSQLHOST is not configured");
             }
             if (port == null || port.trim().isEmpty()) {
-                port = "3306";
+                throw new IllegalStateException("MYSQLPORT is not configured");
             }
             if (database == null || database.trim().isEmpty()) {
-                throw new IllegalStateException("Database name is not configured");
+                throw new IllegalStateException("MYSQLDATABASE is not configured");
             }
             if (user == null || user.trim().isEmpty()) {
-                throw new IllegalStateException("Database username is not configured");
+                throw new IllegalStateException("MYSQLUSER is not configured");
             }
-            if (password == null) {
-                password = "";
+            if (password == null || password.trim().isEmpty()) {
+                throw new IllegalStateException("MYSQLPASSWORD is not configured");
             }
             if (jdbcParams == null || jdbcParams.trim().isEmpty()) {
                 // Default works for cloud MySQL/TiDB endpoints that require TLS.
                 jdbcParams = "useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC"
-                        + "&useSSL=true&requireSSL=true&enabledTLSProtocols=TLSv1.2";
+                        + "&useSSL=true&sslMode=REQUIRED&enabledTLSProtocols=TLSv1.2";
             }
 
             String url = "jdbc:mysql://" + host + ":" + port + "/" + database + "?" + jdbcParams;
@@ -59,9 +58,8 @@ public class Db {
             return DriverManager.getConnection(url, user, password);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Failed to create database connection", e);
         }
-        return null;
     }
 
     public static void initializeSchemaIfRequired() {
@@ -73,9 +71,6 @@ public class Db {
                 return;
             }
             try (Connection con = getConnection()) {
-                if (con == null) {
-                    throw new IllegalStateException("Unable to open DB connection for schema initialization");
-                }
                 ScriptUtils.executeSqlScript(con, new ClassPathResource("schema.sql"));
                 schemaInitialized = true;
                 System.out.println("Database schema initialized successfully.");
