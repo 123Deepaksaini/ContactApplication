@@ -31,9 +31,11 @@ ENV JAVA_OPTS="-Xmx256m -Xms128m"
 # Remove default Tomcat webapps
 RUN rm -rf /usr/local/tomcat/webapps/ROOT
 
-# Disable AJP connector - creates server.xml without AJP
-RUN sed -i 's/<Connector port="8009" protocol="AJP\/1.3"/<Connector port="8009" protocol="AJP\/1.3" enabled="false"/g' /usr/local/tomcat/conf/server.xml || \
-    echo "AJP connector not found or already disabled"
+# Disable AJP connector
+RUN sed -i 's/<Connector port="8009" protocol="AJP\/1.3"/<Connector port="8009" protocol="AJP\/1.3" enabled="false"/g' /usr/local/tomcat/conf/server.xml
+
+# Configure Tomcat to use PORT environment variable
+RUN sed -i 's/<Connector port="8080" protocol="HTTP\/1.1"/<Connector port="${env.PORT}" protocol="HTTP\/1.1"/g' /usr/local/tomcat/conf/server.xml
 
 # Copy built WAR from builder stage
 COPY --from=builder /app/target/ROOT.war /usr/local/tomcat/webapps/ROOT.war
@@ -43,4 +45,4 @@ EXPOSE 8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:8080/ || exit 1
+    CMD curl -f http://localhost:${PORT:-8080}/ || exit 1
