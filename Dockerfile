@@ -31,6 +31,10 @@ ENV JAVA_OPTS="-Xmx256m -Xms128m"
 # Remove default Tomcat webapps
 RUN rm -rf /usr/local/tomcat/webapps/ROOT
 
+# Disable AJP connector - creates server.xml without AJP
+RUN sed -i 's/<Connector port="8009" protocol="AJP\/1.3"/<Connector port="8009" protocol="AJP\/1.3" enabled="false"/g' /usr/local/tomcat/conf/server.xml || \
+    echo "AJP connector not found or already disabled"
+
 # Copy built WAR from builder stage
 COPY --from=builder /app/target/ROOT.war /usr/local/tomcat/webapps/ROOT.war
 
