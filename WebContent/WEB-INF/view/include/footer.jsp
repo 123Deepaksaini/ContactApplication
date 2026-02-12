@@ -1,1 +1,0 @@
-&copyright <a target="_blank" href="#">contact pvt limited</a>

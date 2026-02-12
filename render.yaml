@@ -7,14 +7,14 @@ services:
     healthCheckPath: /
     envVars:
       - key: MYSQLHOST
-        sync: false
+        value: "gateway01.ap-southeast-1.prod.aws.tidbcloud.com"
       - key: MYSQLPORT
         value: "4000"
       - key: MYSQLDATABASE
         value: "contact_ap"
       - key: MYSQLUSER
-        sync: false
+        value: "2FZxrsCJYJcDj9Z.root"
       - key: MYSQLPASSWORD
         sync: false
-      - key: PORT
-        value: "8080"
+      - key: MYSQL_JDBC_PARAMS
+        value: "useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=true&requireSSL=true&enabledTLSProtocols=TLSv1.2"

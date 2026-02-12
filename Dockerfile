@@ -1,48 +1,25 @@
-# Build stage - optimized for low memory
+# Build stage
 FROM maven:3.8.4-eclipse-temurin-8 AS builder
 
 WORKDIR /app
 
-# Set memory limits for Maven build
 ENV MAVEN_OPTS="-Xmx512m -Xms256m"
 
-# Copy pom.xml first for dependency caching
 COPY pom.xml .
-
-# Download dependencies with limited memory
 RUN mvn dependency:go-offline -B -Dmaven.compiler.fork=true
 
-# Copy source code
 COPY src ./src
 
-# Build with limited memory
 RUN mvn clean package -DskipTests -B -Dmaven.compiler.fork=true -Dmaven.compiler.meminitial=256m -Dmaven.compiler.maxmem=512m
+# Runtime stage - run Spring Boot executable WAR directly
+FROM eclipse-temurin:8-jre-jammy
 
-# Runtime stage - using Tomcat for WAR deployment
-FROM tomcat:9.0-jre8-alpine
+WORKDIR /app
 
-# Install curl for health check
-RUN apk add --no-cache curl
+ENV JAVA_OPTS="-Xms128m -Xmx256m"
 
-# Set memory limits for Tomcat
-ENV CATALINA_OPTS="-Xmx256m -Xms128m"
-ENV JAVA_OPTS="-Xmx256m -Xms128m"
+COPY --from=builder /app/target/ROOT.war /app/app.war
 
-# Remove default Tomcat webapps
-RUN rm -rf /usr/local/tomcat/webapps/ROOT
-
-# Disable AJP connector
-RUN sed -i 's/<Connector port="8009" protocol="AJP\/1.3"/<Connector port="8009" protocol="AJP\/1.3" enabled="false"/g' /usr/local/tomcat/conf/server.xml
-
-# Configure Tomcat to use PORT environment variable
-RUN sed -i 's/<Connector port="8080" protocol="HTTP\/1.1"/<Connector port="${env.PORT}" protocol="HTTP\/1.1"/g' /usr/local/tomcat/conf/server.xml
-
-# Copy built WAR from builder stage
-COPY --from=builder /app/target/ROOT.war /usr/local/tomcat/webapps/ROOT.war
-
-# Expose port
 EXPOSE 8080
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:${PORT:-8080}/ || exit 1
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Dserver.port=${PORT:-8080} -jar /app/app.war"]
