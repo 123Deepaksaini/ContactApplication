@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+    <Resource name="jdbc/contact_ap" 
+              auth="Container"
+              type="javax.sql.DataSource"
+              driverClassName="com.mysql.cj.jdbc.Driver"
+              url="jdbc:mysql://${HOST}:${PORT}/${DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+              username="${USERNAME}"
+              password="${PASSWORD}"
+              maxTotal="20"
+              maxIdle="5"
+              maxWaitMillis="10000"/>
+</Context>

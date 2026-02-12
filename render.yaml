@@ -11,7 +11,7 @@ services:
       - key: PORT
         value: "4000"
       - key: DATABASE
-        value: contact_ab
+        value: contact_ap
       - key: USERNAME
         sync: false
       - key: PASSWORD
@@ -21,7 +21,7 @@ services:
 
 databases:
   - name: contact-db
-    databaseName: contact_ab
+    databaseName: contact_ap
     region: singapore
     plan: free
     mysqlMajorVersion: "8"

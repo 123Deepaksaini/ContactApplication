@@ -12,7 +12,7 @@ public class Db {
             // Try JNDI lookup first (for Tomcat WAR deployment)
             try {
                 InitialContext ctx = new InitialContext();
-                DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/contact_ab");
+                DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/contact_ap");
                 if (ds != null) {
                     return ds.getConnection();
                 }
