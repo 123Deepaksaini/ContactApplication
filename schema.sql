@@ -1,7 +1,5 @@
 -- Contact Application Database Schema for Railway MySQL
 
-CREATE DATABASE IF NOT EXISTS railway;
-USE railway;
 
 -- User Table
 CREATE TABLE IF NOT EXISTS user (

@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: contact-app
+    runtime: docker
+    region: singapore
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: MYSQLHOST
+        sync: false
+      - key: MYSQLPORT
+        value: "3306"
+      - key: MYSQLDATABASE
+        value: railway
+      - key: MYSQLUSER
+        sync: false
+      - key: MYSQLPASSWORD
+        sync: false
+
+databases:
+  - name: contact-db
+    databaseName: railway
+    region: singapore
+    plan: free
+    postgresMajorVersion: "14"
