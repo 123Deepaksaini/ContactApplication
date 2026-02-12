@@ -11,15 +11,17 @@ services:
       - key: MYSQLPORT
         value: "3306"
       - key: MYSQLDATABASE
-        value: railway
+        value: contactdb
       - key: MYSQLUSER
         sync: false
       - key: MYSQLPASSWORD
         sync: false
+      - key: PORT
+        value: "8080"
 
 databases:
   - name: contact-db
-    databaseName: railway
+    databaseName: contactdb
     region: singapore
     plan: free
-    postgresMajorVersion: "14"
+    mysqlMajorVersion: "8"
